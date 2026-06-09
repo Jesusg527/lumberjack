@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Cutter Game</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="game">
+
+    <!-- Forest Scene -->
+    <section class="scene">
+
+        <div class="title">
+            TREE CUTTER
+        </div>
+
+        <div id="lumberjack">
+            🧔‍♂️🪓
+        </div>
+
+        <div id="bigTree">
+            🌲
+        </div>
+
+        <div class="stats-panel">
+
+            <p>
+                🌲 Trees:
+                <span id="trees">25</span>
+            </p>
+
+            <p>
+                ❤️ Forest Health:
+                <span id="health">100</span>%
+            </p>
+
+            <p>
+                🪵 Logs:
+                <span id="logsCount">0</span>
+            </p>
+
+            <p>
+                🟫 Planks:
+                <span id="planksCount">0</span>
+            </p>
+
+            <p>
+                🌰 Seeds:
+                <span id="seedsCount">5</span>
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Resource Yard -->
+    <section class="yard">
+
+        <div class="pile-card">
+
+            <h2>🪵 LOG PILE</h2>
+
+            <div
+                id="logs"
+                class="wood-pile">
+            </div>
+
+        </div>
+
+        <div class="pile-card">
+
+            <h2>🟫 PLANK PILE</h2>
+
+            <div
+                id="planks"
+                class="plank-pile">
+            </div>
+
+        </div>
+
+        <div class="pile-card">
+
+            <h2>🌰 SEED PILE</h2>
+
+            <div
+                id="seeds"
+                class="seed-pile">
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Controls -->
+    <section class="controls">
+
+        <button
+            class="green"
+            onclick="plantTree()">
+
+            🌲 Plant Tree
+            <br>
+            (1 Seed)
+
+        </button>
+
+        <button
+            class="brown"
+            onclick="makePlanks()">
+
+            🪵 Make Planks
+            <br>
+            (2 Logs → 1 Plank)
+
+        </button>
+
+        <button
+            class="blue"
+            onclick="startAutomation()">
+
+            ▶ Start Automation
+
+        </button>
+
+        <button
+            class="red"
+            onclick="stopAutomation()">
+
+            ⏹ Stop Automation
+
+        </button>
+
+    </section>
+
+    <!-- Automation Status -->
+
+    <div class="automation-status">
+
+        Automation:
+
+        <span id="automationStatus">
+            OFF
+        </span>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
