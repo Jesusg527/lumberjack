@@ -1,10 +1,17 @@
 const startingTrees = 25;
 
+const TREE_CUT_POINTS = 1;
+const PLANK_POINTS = 5;
+const TREE_PLANT_POINTS = 2;
+const FOREST_BONUS = 10;
+const PLANK_MILESTONE_BONUS = 25;
+
 let logs = 0;
 let planks = 0;
 let seeds = 5;
 let trees = startingTrees;
 let health = 100;
+let points = 0;
 
 let autoCutting = null;
 let autoPlanting = null;
@@ -29,6 +36,7 @@ function cutTree() {
 
         logs += 2;
         trees--;
+        points += TREE_CUT_POINTS;
 
         if (Math.random() < 0.4) {
             seeds++;
@@ -53,6 +61,13 @@ function plantTree() {
 
     seeds--;
     trees++;
+
+    points += TREE_PLANT_POINTS;
+
+    if (trees >= 50) {
+        points += FOREST_BONUS;
+    }
+
     updateGame();
 }
 
@@ -64,6 +79,13 @@ function makePlanks() {
 
     logs -= 2;
     planks++;
+
+    points += PLANK_POINTS;
+
+    if (planks % 10 === 0) {
+        points += PLANK_MILESTONE_BONUS;
+    }
+
     updateGame();
 }
 
@@ -110,7 +132,7 @@ function startAutoPlanting() {
     if (!autoPlanting) {
         autoPlanting = setInterval(() => {
             if (seeds > 0) plantTree();
-        }, 1500);
+        }, 500);
     }
 }
 
@@ -123,7 +145,7 @@ function startAutoSawmill() {
     if (!autoSawmill) {
         autoSawmill = setInterval(() => {
             if (logs >= 2) makePlanks();
-        }, 1200);
+        }, 800);
     }
 }
 
@@ -215,6 +237,7 @@ function updateGame() {
 
     document.getElementById("trees").textContent = trees;
     document.getElementById("health").textContent = health;
+    document.getElementById("pointsCount").textContent = points;
     document.getElementById("logsCount").textContent = logs;
     document.getElementById("planksCount").textContent = planks;
     document.getElementById("seedsCount").textContent = seeds;
@@ -226,6 +249,7 @@ function updateGame() {
     if (trees <= 0) {
         alert("Game Over! The forest was destroyed.");
 
+        points = 0;
         logs = 0;
         planks = 0;
         seeds = 5;
