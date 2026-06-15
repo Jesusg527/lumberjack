@@ -6,12 +6,21 @@ const TREE_PLANT_POINTS = 2;
 const FOREST_BONUS = 10;
 const PLANK_MILESTONE_BONUS = 25;
 
+const CHAINSAW_COST = 400;
+const CHAINSAW_LOG_BONUS = 2;
+
+const PLANK_SELL_PRICE = 3;
+const SEED_COST = 5;
+
 let logs = 0;
 let planks = 0;
 let seeds = 5;
 let trees = startingTrees;
 let health = 100;
 let points = 0;
+let coins = 0;
+
+let chainsawUnlocked = false;
 
 let autoCutting = null;
 let autoPlanting = null;
@@ -34,7 +43,7 @@ function cutTree() {
         lumberjack.classList.add("chop");
         bigTree.classList.add("shake");
 
-        logs += 2;
+        logs += chainsawUnlocked ? 2 + CHAINSAW_LOG_BONUS : 2;
         trees--;
         points += TREE_CUT_POINTS;
 
@@ -89,6 +98,55 @@ function makePlanks() {
     updateGame();
 }
 
+function sellPlanks() {
+    if (planks <= 0) {
+        alert("No planks to sell.");
+        return;
+    }
+
+    coins += planks * PLANK_SELL_PRICE;
+    planks = 0;
+
+    updateGame();
+}
+
+function buySeeds() {
+    if (coins < SEED_COST) {
+        alert("Not enough coins.");
+        return;
+    }
+
+    coins -= SEED_COST;
+    seeds++;
+
+    updateGame();
+}
+
+function buyChainsaw() {
+    if (chainsawUnlocked) {
+        alert("🪚 Chainsaw already owned!");
+        return;
+    }
+
+    if (points < CHAINSAW_COST) {
+        alert(`Need ${CHAINSAW_COST} points.\nCurrent points: ${points}`);
+        return;
+    }
+
+    points -= CHAINSAW_COST;
+    chainsawUnlocked = true;
+
+    alert("🪚 Chainsaw purchased! Trees now produce 4 logs.");
+
+    stopAutoCutting();
+
+    if (automationRunning) {
+        startAutoCutting();
+    }
+
+    updateGame();
+}
+
 function updateHealth() {
     health = Math.min(100, Math.floor((trees / startingTrees) * 100));
 }
@@ -119,7 +177,10 @@ function stopAutomation() {
 
 function startAutoCutting() {
     if (!autoCutting) {
-        autoCutting = setInterval(cutTree, 1000);
+        autoCutting = setInterval(
+            cutTree,
+            chainsawUnlocked ? 500 : 1000
+        );
     }
 }
 
@@ -232,12 +293,29 @@ function displaySeeds() {
     }
 }
 
+function updateChainsawButton() {
+    const chainsawButton = document.getElementById("chainsawButton");
+
+    if (!chainsawButton) return;
+
+    if (chainsawUnlocked) {
+        chainsawButton.innerHTML = "🪚 Chainsaw Owned";
+        chainsawButton.disabled = true;
+        chainsawButton.style.opacity = "0.7";
+    } else {
+        chainsawButton.innerHTML = `🪚 Buy Chainsaw<br>${CHAINSAW_COST} Points`;
+        chainsawButton.disabled = false;
+        chainsawButton.style.opacity = "1";
+    }
+}
+
 function updateGame() {
     updateHealth();
 
     document.getElementById("trees").textContent = trees;
     document.getElementById("health").textContent = health;
     document.getElementById("pointsCount").textContent = points;
+    document.getElementById("coinsCount").textContent = coins;
     document.getElementById("logsCount").textContent = logs;
     document.getElementById("planksCount").textContent = planks;
     document.getElementById("seedsCount").textContent = seeds;
@@ -245,15 +323,18 @@ function updateGame() {
     displayLogs();
     displayPlanks();
     displaySeeds();
+    updateChainsawButton();
 
     if (trees <= 0) {
         alert("Game Over! The forest was destroyed.");
 
         points = 0;
+        coins = 0;
         logs = 0;
         planks = 0;
         seeds = 5;
         trees = startingTrees;
+        chainsawUnlocked = false;
 
         stopAutomation();
         updateGame();
